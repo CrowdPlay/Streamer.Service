@@ -16,7 +16,7 @@ var app = express();
   }
 })();
 
-function pipeClip(trackId, filename, res) {
+function piperClip(trackId, filename, res) {
   var stats = fs.statSync(filename);
   var readStream = fs.createReadStream(filename);
 
@@ -40,11 +40,11 @@ app.get('/room/1/stream', function (req, res) {
     var request = clipService.request(currentTrackId);
     request.pipe(writeStream);
     return request.on('end', function () {
-      pipeClip(currentTrackId, trackfilename, res);
+      piperClip(currentTrackId, trackfilename, res);
     });
   }
 
-  pipeClip(currentTrackId, trackfilename, res);
+  piperClip(currentTrackId, trackfilename, res);
 });
 
 app.use('/', express.static(__dirname + '/public'));
