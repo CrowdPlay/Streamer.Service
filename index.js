@@ -14,4 +14,8 @@ app.get('/room/1', function (req, res) {
 app.use('/', express.static(__dirname + '/public'));
 
 
-app.listen(8080);
+var port = process.env.PORT || 8080;
+
+app.listen(port, function () {
+  console.log("Streamer Service listening on port " + port);
+});
