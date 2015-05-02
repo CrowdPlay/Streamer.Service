@@ -68,9 +68,22 @@ app.get('/room/1/stream', function (req, res) {
         debug('Media request error: ', err);
         res.status(500).send('Media Service error: ' + err);
       });
-      req.pipe(writeStream);
-      req.on('end', function () {
-        pipeMedia(trackId, filename, res);
+      
+      req.on('response', function (mediaResponse) {
+        debug('Got media response (%s)', mediaResponse.statusCode);
+
+        if (mediaResponse.statusCode != 200) {
+          debug('Aborting media download due to unexpected response');
+          return;
+        }
+
+        debug('Piping media response to file...');
+        req.pipe(writeStream);
+
+        req.on('end', function () {
+          debug('Piping media file to API response...');
+          pipeMedia(trackId, filename, res);
+        });
       });
 
       return;
