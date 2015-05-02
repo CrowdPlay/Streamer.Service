@@ -5,7 +5,8 @@ var moody_service_baseurl = process.env["moody_service_baseurl"];
 var fs = require('fs');
 var util = require('util');
 var express = require('express');
-var clipService = require('./lib/clipservice.js').create(consumer_key, consumer_secret);
+var clipService = require('./lib/clipservice').create(consumer_key, consumer_secret);
+var moodyService = require('./lib/moodyservice').create(moody_service_baseurl);
 
 var app = express();
 
@@ -32,19 +33,25 @@ function piperClip(trackId, filename, res) {
 
 app.get('/room/1/stream', function (req, res) {
 
-  var currentTrackId = 43221994;
-  var trackfilename = __dirname + '/clips/' + currentTrackId;
+  moodyService.getRoomTrack(1, function (err, trackId) {
+    if (err) return res.status(500).write('Moody service down??? ' + err);
 
-  if (!fs.existsSync(trackfilename)) {
-    var writeStream = fs.createWriteStream(trackfilename);
-    var request = clipService.request(currentTrackId);
-    request.pipe(writeStream);
-    return request.on('end', function () {
-      piperClip(currentTrackId, trackfilename, res);
-    });
-  }
+    console.log('Moody service said the current trackId is ' + trackId);
 
-  piperClip(currentTrackId, trackfilename, res);
+    var filename = __dirname + '/clips/' + trackId;
+
+    if (!fs.existsSync(filename)) {
+      var writeStream = fs.createWriteStream(filename);
+      var request = clipService.request(trackId);
+      request.pipe(writeStream);
+      return request.on('end', function () {
+        piperClip(trackId, filename, res);
+      });
+    }
+
+    piperClip(trackId, filename, res);
+
+  });
 });
 
 app.use('/', express.static(__dirname + '/public'));
