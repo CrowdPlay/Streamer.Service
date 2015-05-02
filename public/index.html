@@ -4,9 +4,34 @@
   <title></title>
 </head>
 <body>
-  <audio controls>
-    <source src="/room/1" type='audio/mpeg'>
+  <audio id="player" controls autoplay preload="auto">
+    <source src="/room/1/stream" type='audio/mpeg'>
     <p>Your user agent does not support the HTML5 Audio element.</p>
   </audio>
+
+  <script>
+    var player = document.getElementById('player');
+    player.onended = function() {
+      
+    };
+  </script>
+
+  <!-- <audio id="audio1" media-player="audio1" playlist="playlist" preload="auto"></audio> 
+
+  <script>
+    var timestamp = 1430577437;
+
+    var audio1 = document.getElementById('audio1');
+
+    audio1.on('canplay', function () {
+      audio1.off('canplay');
+      //nowPlaying = 'true';
+      audio1.play(response.firstTrackIndex - 1);
+      audio1.on('play', function () {
+        audio1.off('play');
+        audio1.seek(response.firstTrackOffset);
+      });
+    });
+  </script>-->
 </body>
 </html>
