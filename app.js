@@ -9,6 +9,12 @@ var clipService = require('./lib/clipservice.js').create(consumer_key, consumer_
 
 var app = express();
 
+(function createClipsDirectory() {
+  var dir = __dirname + '/clips';
+  if (!fs.existsSync(dir)){
+    fs.mkdirSync(dir);
+  }
+})();
 
 function pipeClip(trackId, filename, res) {
   var stats = fs.statSync(filename);
@@ -43,9 +49,4 @@ app.get('/room/1/stream', function (req, res) {
 
 app.use('/', express.static(__dirname + '/public'));
 
-
-var port = process.env.PORT || 8080;
-
-app.listen(port, function () {
-  console.log("Streamer Service listening on port " + port);
-});
+module.exports = app;
