@@ -96,7 +96,9 @@ app.get('/room/1/stream', function (req, res) {
 app.get('/search', function (req, res) {
   var searchTerm = req.query.q;
   var request = mediaService.searchRequest(searchTerm, function (err, trackId, duration) {
-
+    if (err) return res.status(500).send(err);
+    if (trackId === null) return res.status(404).send('Not found');
+    
     res.status(200).send({ id: trackId, duration: duration });
   });
 });
