@@ -40,7 +40,8 @@ function pipeMedia(trackId, filename, res) {
     'Content-Type': 'audio/mpeg',
     'Content-Length': stats.size,
     'Cache-Control': 'no-cache, no-store',
-    'Content-Disposition': 'attachment; filename=' + trackId + '.mp3'
+    'Content-Disposition': 'attachment; filename=' + trackId + '.mp3',
+    'Access-Control-Allow-Origin': '*'
   });
 
   readStream.pipe(res);
@@ -100,6 +101,15 @@ app.get('/search', function (req, res) {
     if (trackId === null) return res.status(404).send('Not found');
     
     res.status(200).send({ id: trackId, duration: duration });
+  });
+});
+
+app.get('/track/:trackId', function (req, res) {
+  var trackId = req.params.trackId;
+  var request = mediaService.trackDetailRequest(trackId, function (err, detail) {
+    if (err) return res.status(500).send(err);
+    
+    res.status(200).send(detail);
   });
 });
 
