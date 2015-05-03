@@ -41,15 +41,16 @@ function pipeMedia(trackId, filename, res) {
     'Content-Length': stats.size,
     'Cache-Control': 'no-cache, no-store',
     'Content-Disposition': 'attachment; filename=' + trackId + '.mp3',
-    'Access-Control-Allow-Origin': '*'
+    'Access-Control-Allow-Origin': '*',
+    'X-Crowdplay-TrackID': trackId
   });
 
   readStream.pipe(res);
 }
 
-app.get('/room/1/stream', function (req, res) {
-
-  moodyService.getRoomTrack(1, function (err, trackId) {
+app.get('/room/:roomId/stream', function (req, res) {
+  var roomId = req.params.roomId;
+  moodyService.getRoomTrack(roomId, function (err, trackId) {
     if (err) {
       trackId = 43221994;
       debug('Moody service down, defaulting to trackId ' + trackId);
@@ -91,6 +92,20 @@ app.get('/room/1/stream', function (req, res) {
     }
 
     pipeMedia(trackId, filename, res);
+  });
+});
+
+app.get('/room/:roomId/info', function (req, res) {
+  var roomId = req.params.roomId;
+  moodyService.getRoomTrack(roomId, function (err, trackId) {
+    if (err) {
+      trackId = 43221994;
+      debug('Moody service down, defaulting to trackId ' + trackId);
+    } else {
+      debug('Moody service reported the current trackId is ' + trackId);
+    }
+
+    res.status(200).send({ id: parseInt(roomId, 10), trackId: trackId });
   });
 });
 
