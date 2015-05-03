@@ -113,6 +113,24 @@ app.get('/track/:trackId', function (req, res) {
   });
 });
 
+app.get('/artist/:artistId', function (req, res) {
+  var artistId = req.params.artistId;
+  var request = mediaService.artistDetailRequest(artistId, function (err, detail) {
+    if (err) return res.status(500).send(err);
+    
+    res.status(200).send(detail);
+  });
+});
+
+app.get('/release/:releaseId', function (req, res) {
+  var releaseId = req.params.releaseId;
+  var request = mediaService.releaseDetailRequest(releaseId, function (err, detail) {
+    if (err) return res.status(500).send(err);
+    
+    res.status(200).send(detail);
+  });
+});
+
 app.use('/', express.static(__dirname + '/public'));
 
 module.exports = app;
