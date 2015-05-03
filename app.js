@@ -93,6 +93,14 @@ app.get('/room/1/stream', function (req, res) {
   });
 });
 
+app.get('/search', function (req, res) {
+  var searchTerm = req.query.q;
+  var request = mediaService.searchRequest(searchTerm, function (err, trackId, duration) {
+
+    res.status(200).send({ id: trackId, duration: duration });
+  });
+});
+
 app.use('/', express.static(__dirname + '/public'));
 
 module.exports = app;
